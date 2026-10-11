@@ -298,6 +298,65 @@ app.get("/teams/statistics", async (req, res) => {
   }
 
 });
+app.get("/odds", async (req, res) => {
+
+  try {
+
+    const params = {};
+
+    if (req.query.fixture) params.fixture = req.query.fixture;
+
+    if (req.query.league) params.league = req.query.league;
+
+    if (req.query.season) params.season = req.query.season;
+
+    if (req.query.date) params.date = req.query.date;
+
+    if (req.query.bookmaker) params.bookmaker = req.query.bookmaker;
+
+    if (req.query.bet) params.bet = req.query.bet;
+
+    if (req.query.page) params.page = req.query.page;
+
+    if (!params.fixture && !(params.league && params.season)) {
+
+      return res.status(400).json({
+
+        ok: false,
+
+        error: "fixture or league+season is required"
+
+      });
+
+    }
+
+    const result = await apiFootball("/odds", params);
+
+    res.status(result.httpStatus).json({
+
+      ok:
+
+        !result.data?.errors ||
+
+        Object.keys(result.data.errors).length === 0,
+
+      ...result.data
+
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+
+      ok: false,
+
+      error: error.message
+
+    });
+
+  }
+
+});
 app.listen(PORT, "0.0.0.0", () => {
 
   console.log(`AI Football Data Core running on port ${PORT}`);
