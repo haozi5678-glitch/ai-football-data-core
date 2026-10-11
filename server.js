@@ -197,7 +197,26 @@ app.get("/lineups", async (req, res) => {
   }
 
 });
+app.get("/test-j1", async (req, res) => {
+  try {
+    const result = await apiFootball("fixtures", {
+      league: 98,
+      season: 2026,
+      date: "2026-10-11"
+    });
 
+    res.status(result.httpStatus).json({
+      ok: !result.data?.errors ||
+        Object.keys(result.data.errors).length === 0,
+      ...result.data
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      error: error.message
+    });
+  }
+});
 app.listen(PORT, "0.0.0.0", () => {
 
   console.log(`AI Football Data Core running on port ${PORT}`);
