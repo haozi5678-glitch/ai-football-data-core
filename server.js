@@ -201,7 +201,7 @@ app.get("/test-j1", async (req, res) => {
   try {
     const result = await apiFootball("fixtures", {
       league: 98,
-      season: 2026,
+      season: 2024,
       date: "2026-10-11"
     });
 
