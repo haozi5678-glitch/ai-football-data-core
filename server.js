@@ -1,4 +1,4 @@
-import express from "express";
+niimport express from "express";
 
 const app = express();
 
@@ -268,6 +268,35 @@ app.get("/fixtures/statistics", async (req, res) => {
       error: error.message
     });
   }
+});
+app.get("/teams/statistics", async (req, res) => {
+
+  try {
+
+    const result = await apiFootball("teams/statistics", req.query);
+
+    res.status(result.httpStatus).json({
+
+      ok: !result.data?.errors ||
+
+        Object.keys(result.data.errors).length === 0,
+
+      ...result.data
+
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+
+      ok: false,
+
+      error: error.message
+
+    });
+
+  }
+
 });
 app.listen(PORT, "0.0.0.0", () => {
 
