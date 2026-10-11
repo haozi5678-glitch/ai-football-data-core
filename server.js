@@ -357,6 +357,59 @@ app.get("/odds", async (req, res) => {
   }
 
 });
+app.get("/odds2/sports", async (req, res) => {
+
+  try {
+
+    const apiKey = process.env.THE_ODDS_API_KEY;
+
+    if (!apiKey) {
+
+      return res.status(500).json({
+
+        ok: false,
+
+        error: "THE_ODDS_API_KEY is not configured"
+
+      });
+
+    }
+
+    const url =
+
+      "https://api.the-odds-api.com/v4/sports/?apiKey=" +
+
+      encodeURIComponent(apiKey);
+
+    const response = await fetch(url);
+
+    const data = await response.json();
+
+    res.status(response.status).json({
+
+      ok: response.ok,
+
+      httpStatus: response.status,
+
+      sports: Array.isArray(data) ? data : undefined,
+
+      error: Array.isArray(data) ? undefined : data
+
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+
+      ok: false,
+
+      error: error.message
+
+    });
+
+  }
+
+});
 app.listen(PORT, "0.0.0.0", () => {
 
   console.log(`AI Football Data Core running on port ${PORT}`);
