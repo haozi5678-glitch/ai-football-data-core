@@ -410,6 +410,87 @@ app.get("/odds2/sports", async (req, res) => {
   }
 
 });
+app.get("/odds2/odds", async (req, res) => {
+
+  try {
+
+    const apiKey = process.env.THE_ODDS_API_KEY;
+
+    if (!apiKey) {
+
+      return res.status(500).json({
+
+        ok: false,
+
+        error: "THE_ODDS_API_KEY is not configured"
+
+      });
+
+    }
+
+    const sport = req.query.sport;
+
+    if (!sport) {
+
+      return res.status(400).json({
+
+        ok: false,
+
+        error: "sport is required"
+
+      });
+
+    }
+
+    const regions = req.query.regions || "eu";
+
+    const markets = req.query.markets || "h2h";
+
+    const oddsFormat = req.query.oddsFormat || "decimal";
+
+    const url =
+
+      `https://api.the-odds-api.com/v4/sports/${encodeURIComponent(sport)}/odds/` +
+
+      `?apiKey=${encodeURIComponent(apiKey)}` +
+
+      `&regions=${encodeURIComponent(regions)}` +
+
+      `&markets=${encodeURIComponent(markets)}` +
+
+      `&oddsFormat=${encodeURIComponent(oddsFormat)}`;
+
+    const response = await fetch(url);
+
+    const data = await response.json();
+
+    res.status(response.status).json({
+
+      ok: response.ok,
+
+      httpStatus: response.status,
+
+      sport,
+
+      events: Array.isArray(data) ? data : undefined,
+
+      error: Array.isArray(data) ? undefined : data
+
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+
+      ok: false,
+
+      error: error.message
+
+    });
+
+  }
+
+});
 app.listen(PORT, "0.0.0.0", () => {
 
   console.log(`AI Football Data Core running on port ${PORT}`);
